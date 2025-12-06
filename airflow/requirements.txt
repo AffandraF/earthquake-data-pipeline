@@ -2,3 +2,5 @@ pandas
 psycopg2-binary
 sqlalchemy
 pyarrow
+reverse_geocoder
+pycountry-convert
