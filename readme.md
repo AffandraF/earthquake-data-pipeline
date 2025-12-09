@@ -1,4 +1,4 @@
-# Earthquake Data Engineering Pipeline
+# Earthquake Data Pipeline
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![Airflow](https://img.shields.io/badge/Orchestrator-Apache%20Airflow-red)
