@@ -1,9 +1,10 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
-from src.Bronze import process_bronze
-from src.Silver import process_silver
-from src.Gold import process_gold
+from urllib.parse import quote_plus
+from src.pandas.Bronze import process_bronze
+from src.pandas.Silver import process_silver
+from src.pandas.Gold import process_gold
 import os
 
 BASE_PATH = '/opt/airflow/data'
@@ -12,12 +13,12 @@ BRONZE_PATH = f'{BASE_PATH}/bronze/earthquake_data.parquet'
 SILVER_TABLE = 'silver.silver_data'
 GOLD_TABLE = 'gold.gold_data'
 
-user = os.getenv('POSTGRES_USER')
-password = os.getenv('POSTGRES_PASSWORD')
-db = os.getenv('POSTGRES_DB')
-port = os.getenv('POSTGRES_PORT')
+user = os.getenv('POSTGRES_USER', '')
+password = os.getenv('POSTGRES_PASSWORD', '')
+db = os.getenv('POSTGRES_DB', '')
+port = os.getenv('POSTGRES_PORT', '5432')
 host = 'postgres'
-con_str = f"postgresql://{user}:{password}@{host}:{port}/{db}"
+con_str = f"postgresql://{quote_plus(user)}:{quote_plus(password)}@{host}:{port}/{db}"
 
 default_args = {
     'owner': 'airflow',
@@ -27,7 +28,7 @@ default_args = {
 }
 
 with DAG (
-    dag_id='earthquake_data_pipeline',
+    dag_id='earthquake_data_pipeline_pandas',
     default_args=default_args,
     schedule_interval='@daily',
     catchup=False
