@@ -4,3 +4,4 @@ sqlalchemy
 pyarrow
 reverse_geocoder
 pycountry-convert
+pyspark

@@ -35,6 +35,9 @@ def process_bronze(source_path: str, bronze_path: str):
     logging.info(f"Ingesting raw CSV data from {source_path}")
     
     spark = get_spark_session()
+    # Enable dynamic partition overwrite so that only the current partition is overwritten
+    # and historical partition folders are not deleted.
+    spark.conf.set("spark.sql.sources.partitionOverwriteMode", "dynamic")
     
     # Read raw CSV using the defined schema
     df = spark.read \
@@ -53,7 +56,7 @@ def process_bronze(source_path: str, bronze_path: str):
     
     # Write to bronze parquet path, partitioned by ingest_date for data retention
     logging.info(f"Writing parquet to {bronze_path} (partitioned by ingest_date)")
-    df.write.mode("append").partitionBy("ingest_date").parquet(bronze_path)
+    df.write.mode("overwrite").partitionBy("ingest_date").parquet(bronze_path)
     
     logging.info(f"Successfully processed Bronze data. {row_count} records ingested.")
 

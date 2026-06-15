@@ -1,3 +1,13 @@
+import sys
+import os
+from pathlib import Path
+
+# Add project root to sys.path to resolve 'src' imports
+BASE_DIR_LOCAL = Path(__file__).resolve().parents[2]  # local/host environment root
+BASE_DIR_DOCKER = Path(__file__).resolve().parents[1] # container/docker environment root
+sys.path.append(str(BASE_DIR_LOCAL))
+sys.path.append(str(BASE_DIR_DOCKER))
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
@@ -5,7 +15,6 @@ from urllib.parse import quote_plus
 from src.pyspark.bronze import process_bronze
 from src.pyspark.silver import process_silver
 from src.pyspark.gold import process_gold
-import os
 
 BASE_PATH = '/opt/airflow/data'
 SOURCE_PATH = f'{BASE_PATH}/earthquake_data.csv'

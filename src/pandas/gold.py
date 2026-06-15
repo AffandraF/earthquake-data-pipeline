@@ -1,7 +1,7 @@
 import pandas as pd
 import logging
 from sqlalchemy import create_engine
-from src.pandas.postgres_loader import save_postgres, parse_db_con_str
+from src.pandas.postgres_loader import save_postgres
 from src.pandas.schemas import (
     get_gold_col_names, get_gold_types,
     get_country_stats_col_names, get_country_stats_types,
@@ -75,4 +75,4 @@ def process_gold(con_str, silver_table, gold_table):
     logging.info("Upserting statistics into country stats table: gold.country_stats")
     save_postgres(df_stats, con_str, "gold.country_stats", key_cols=["country"])
     
-    logging.info("Gold layer processing completed successfully.")
+    logging.info("Gold layer processing completed successfully.")

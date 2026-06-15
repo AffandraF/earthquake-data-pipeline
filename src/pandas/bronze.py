@@ -38,10 +38,23 @@ def process_bronze(source_path, bronze_path):
     # Tambah metadata waktu ingest dan tanggal ingest
     current_time = pd.Timestamp.now()
     df['ingest_timestamp'] = current_time
-    df['ingest_date'] = current_time.strftime('%Y-%m-%d')
+    ingest_date = current_time.strftime('%Y-%m-%d')
+    df['ingest_date'] = ingest_date
 
     # Simpan ke bronze dengan format parquet dan partisi ingest_date
+    if os.path.exists(bronze_path) and os.path.isfile(bronze_path):
+        logging.info(f"Removing existing file at {bronze_path} to create directory structure.")
+        os.remove(bronze_path)
+        
     os.makedirs(bronze_path, exist_ok=True)
+    
+    # Hapus folder partisi tanggal berjalan jika sudah ada agar data tidak menumpuk
+    partition_path = os.path.join(bronze_path, f"ingest_date={ingest_date}")
+    if os.path.exists(partition_path) and os.path.isdir(partition_path):
+        logging.info(f"Clearing existing partition directory at {partition_path} for idempotency.")
+        import shutil
+        shutil.rmtree(partition_path)
+        
     df.to_parquet(
         bronze_path,
         partition_cols=['ingest_date'],

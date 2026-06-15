@@ -1,11 +1,20 @@
+import sys
+import os
+from pathlib import Path
+
+# Add project root to sys.path to resolve 'src' imports
+BASE_DIR_LOCAL = Path(__file__).resolve().parents[2]  # local/host environment root
+BASE_DIR_DOCKER = Path(__file__).resolve().parents[1] # container/docker environment root
+sys.path.append(str(BASE_DIR_LOCAL))
+sys.path.append(str(BASE_DIR_DOCKER))
+
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime, timedelta
 from urllib.parse import quote_plus
-from src.pandas.Bronze import process_bronze
-from src.pandas.Silver import process_silver
-from src.pandas.Gold import process_gold
-import os
+from src.pandas.bronze import process_bronze
+from src.pandas.silver import process_silver
+from src.pandas.gold import process_gold
 
 BASE_PATH = '/opt/airflow/data'
 SOURCE_PATH = f'{BASE_PATH}/earthquake_data.csv'
